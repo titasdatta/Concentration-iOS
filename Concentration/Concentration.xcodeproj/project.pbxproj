@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F02EE6220457B7400DAE181 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F02EE6120457B7400DAE181 /* ThemeManager.swift */; };
+		7F02EE6420457BD100DAE181 /* GameTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F02EE6320457BD100DAE181 /* GameTheme.swift */; };
 		7F7E10BD2042973600AF67FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7E10BC2042973600AF67FD /* AppDelegate.swift */; };
 		7F7E10BF2042973600AF67FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7E10BE2042973600AF67FD /* ViewController.swift */; };
 		7F7E10C22042973600AF67FD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7F7E10C02042973600AF67FD /* Main.storyboard */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7F02EE6120457B7400DAE181 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		7F02EE6320457BD100DAE181 /* GameTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTheme.swift; sourceTree = "<group>"; };
 		7F7E10B92042973600AF67FD /* Concentration.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Concentration.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F7E10BC2042973600AF67FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7F7E10BE2042973600AF67FD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -64,11 +68,13 @@
 				7F7E10BE2042973600AF67FD /* ViewController.swift */,
 				7F7E10C02042973600AF67FD /* Main.storyboard */,
 				7F7E10CE2042F8F000AF67FD /* Concentration.swift */,
+				7F02EE6320457BD100DAE181 /* GameTheme.swift */,
+				7F02EE6120457B7400DAE181 /* ThemeManager.swift */,
+				7F7E10D22044976300AF67FD /* Scorekeeper.swift */,
 				7F7E10D02042F94300AF67FD /* Card.swift */,
 				7F7E10C32042973600AF67FD /* Assets.xcassets */,
 				7F7E10C52042973600AF67FD /* LaunchScreen.storyboard */,
 				7F7E10C82042973600AF67FD /* Info.plist */,
-				7F7E10D22044976300AF67FD /* Scorekeeper.swift */,
 			);
 			path = Concentration;
 			sourceTree = "<group>";
@@ -145,11 +151,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F02EE6420457BD100DAE181 /* GameTheme.swift in Sources */,
 				7F7E10BF2042973600AF67FD /* ViewController.swift in Sources */,
 				7F7E10BD2042973600AF67FD /* AppDelegate.swift in Sources */,
 				7F7E10CF2042F8F000AF67FD /* Concentration.swift in Sources */,
 				7F7E10D12042F94300AF67FD /* Card.swift in Sources */,
 				7F7E10D32044976300AF67FD /* Scorekeeper.swift in Sources */,
+				7F02EE6220457B7400DAE181 /* ThemeManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

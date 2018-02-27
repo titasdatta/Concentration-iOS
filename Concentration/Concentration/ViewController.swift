@@ -18,8 +18,7 @@ class ViewController: UIViewController {
     
     lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
     
-    var gameThemes: [GameThemes]?
-    var currentGameTheme: GameThemes? {
+    var currentGameTheme: GameTheme? {
         didSet {
             flipCountLabel.textColor = currentGameTheme?.cardBackFaceColor
             self.view.backgroundColor = currentGameTheme?.backgroundColor
@@ -33,6 +32,8 @@ class ViewController: UIViewController {
     }
     var currentEmojiChoices: [String] = []
     
+    let themeManager: ThemeManager = ThemeManager()
+    
     var flipsCount = 0 {
         didSet {
             flipCountLabel.text = "Flips: \(flipsCount)"
@@ -43,13 +44,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         newGameButton.isHidden = true
         scoreLabel.text = "Total Score: \(game.scoreKeeper.totalScore)"
-        gameThemes = [GameThemes(emojiChoices: emojiChoicesHalloween, backgroundColor: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), cardBackFaceColor: #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)),
-                      GameThemes(emojiChoices: emojiChoicesAnimals, backgroundColor: #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1), cardBackFaceColor: #colorLiteral(red: 0.1960784346, green: 0.3411764801, blue: 0.1019607857, alpha: 1)),
-                      GameThemes(emojiChoices: emojiChoicesObjects, backgroundColor: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), cardBackFaceColor: #colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1)),
-                      GameThemes(emojiChoices: emojiChoicesFood, backgroundColor: #colorLiteral(red: 0.721568644, green: 0.8862745166, blue: 0.5921568871, alpha: 1), cardBackFaceColor: #colorLiteral(red: 0.521568656, green: 0.1098039225, blue: 0.05098039284, alpha: 1)),
-                      GameThemes(emojiChoices: emojiChoicesFaces, backgroundColor: #colorLiteral(red: 0.5738074183, green: 0.5655357838, blue: 0, alpha: 1), cardBackFaceColor: #colorLiteral(red: 0.9995340705, green: 0.988355577, blue: 0.4726552367, alpha: 1)),
-                      GameThemes(emojiChoices: emojiChoicesSports, backgroundColor: #colorLiteral(red: 0.9568627477, green: 0.6588235497, blue: 0.5450980663, alpha: 1), cardBackFaceColor: #colorLiteral(red: 0.1921568662, green: 0.007843137719, blue: 0.09019608051, alpha: 1))]
-        chooseRandomGameTheme(fromThemes: gameThemes!)
+        updateUI(for: themeManager.chooseRandomGameTheme())
     }
 
     override func didReceiveMemoryWarning() {
@@ -79,7 +74,7 @@ class ViewController: UIViewController {
     
     func startNewGame() {
         game.startNewGame()
-        chooseRandomGameTheme(fromThemes: gameThemes!)
+        updateUI(for: themeManager.chooseRandomGameTheme())
         updateViewFromModel()
         flipsCount = 0
         newGameButton.isHidden = true
@@ -106,26 +101,6 @@ class ViewController: UIViewController {
         scoreLabel.text = "Total Score: \(game.scoreKeeper.totalScore)"
     }
     
-    var emojiChoicesHalloween = ["👻", "🎃", "🦇", "😱", "🙀", "👹", "😈", "🍭", "🐺"]
-    var emojiChoicesAnimals = ["🐶", "🐱", "🐹", "🦊", "🐻", "🐼" ,"🐯" ,"🦁", "🐵"]
-    var emojiChoicesSports = ["⚽️", "🏀", "🏈", "🎾", "🏹", "🏓", "🎱", "🏑", "🏸"]
-    var emojiChoicesFaces = ["😀", "☺️", "🤪", "😘", "😞", "🤯", "🤔", "😡", "😎"]
-    var emojiChoicesFood = ["🍏", "🍓", "🍆", "🥞", "🍐", "🍋", "🍇", "🥝", "🥕"]
-    var emojiChoicesObjects = ["⌚️", "📷", "⏰", "🎥", "💻", "🔦", "⚒", "☎️", "🖨"]
-    
-    struct GameThemes {
-        var emojiChoices: [String]
-        var backgroundColor: UIColor
-        var cardBackFaceColor: UIColor
-        
-        init(emojiChoices: [String], backgroundColor: UIColor, cardBackFaceColor: UIColor) {
-            self.emojiChoices = emojiChoices
-            self.backgroundColor = backgroundColor
-            self.cardBackFaceColor = cardBackFaceColor
-        }
-    }
-    
-    
     var emoji = [Int: String]()
     
     func emoji(for card: Card) -> String {
@@ -137,10 +112,11 @@ class ViewController: UIViewController {
         return emoji[card.identifier] ?? "?"
     }
     
-    func chooseRandomGameTheme(fromThemes gameThemes: [GameThemes]){
-        let randomIndex = Int(arc4random_uniform(UInt32(gameThemes.count)))
-        currentGameTheme = gameThemes[randomIndex]
-        currentEmojiChoices = (currentGameTheme?.emojiChoices)!
+    func updateUI(for theme: GameTheme){
+        self.currentGameTheme = theme
+        if let emojiChoices = self.currentGameTheme?.emojiChoices {
+            self.currentEmojiChoices = emojiChoices
+        }
     }
     
 }

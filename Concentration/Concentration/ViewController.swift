@@ -10,33 +10,29 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    @IBOutlet weak var flipCountLabel: UILabel!
-    @IBOutlet var cardButtons: [UIButton]!
-    @IBOutlet weak var newGameButton: UIButton!
-    @IBOutlet weak var scoreLabel: UILabel!
-    @IBOutlet weak var timerLabel: UILabel!
+    @IBOutlet private weak var flipCountLabel: UILabel!
+    @IBOutlet private var cardButtons: [UIButton]!
+    @IBOutlet private weak var newGameButton: UIButton!
+    @IBOutlet private weak var scoreLabel: UILabel!
+    @IBOutlet private weak var timerLabel: UILabel!
     
-    lazy var game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+    private var startTime = TimeInterval()
+    private var timer = Timer()
     
-    var currentGameTheme: GameTheme? {
-        didSet {
-            flipCountLabel.textColor = currentGameTheme?.cardBackFaceColor
-            self.view.backgroundColor = currentGameTheme?.backgroundColor
-            for buttons in cardButtons {
-                buttons.backgroundColor = currentGameTheme?.cardBackFaceColor
-                buttons.isEnabled = true
-            }
-            scoreLabel.textColor = currentGameTheme?.cardBackFaceColor
-            timerLabel.textColor = currentGameTheme?.cardBackFaceColor
-        }
+    lazy var game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
+    
+    var numberOfPairsOfCards: Int {
+        return ((cardButtons.count + 1) / 2)
     }
+    
+    var currentGameTheme: GameTheme? 
     var currentEmojiChoices: [String] = []
     
     let themeManager: ThemeManager = ThemeManager()
     
     var flipsCount = 0 {
         didSet {
-            flipCountLabel.text = "Flips: \(flipsCount)"
+            updateFlipCountLabel()
         }
     }
 
@@ -45,6 +41,16 @@ class ViewController: UIViewController {
         newGameButton.isHidden = true
         scoreLabel.text = "Total Score: \(game.scoreKeeper.totalScore)"
         updateUI(for: themeManager.chooseRandomGameTheme())
+        startTimer()
+    }
+    
+    private func updateFlipCountLabel(){
+        let attributes: [NSAttributedStringKey: Any] = [
+            .strokeWidth : 5.0,
+            .strokeColor : currentGameTheme?.cardBackFaceColor ?? #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
+        ]
+        let attributedString = NSAttributedString(string: "Flips: \(flipsCount)", attributes: attributes)
+        flipCountLabel.attributedText = attributedString
     }
 
     override func didReceiveMemoryWarning() {
@@ -65,6 +71,7 @@ class ViewController: UIViewController {
         //Making new game button visible when all cards are matched
         if game.areAllCardsMatched() == true {
             newGameButton.isHidden = false
+            stopTimer()
         }
     }
     
@@ -79,6 +86,7 @@ class ViewController: UIViewController {
         flipsCount = 0
         newGameButton.isHidden = true
         emoji = [:]
+        startTimer()
     }
     
     func updateViewFromModel() {
@@ -95,29 +103,70 @@ class ViewController: UIViewController {
                     button.isEnabled = false
                 } else {
                     button.backgroundColor = currentGameTheme?.cardBackFaceColor
+                    button.isEnabled = true
                 }
             }
         }
         scoreLabel.text = "Total Score: \(game.scoreKeeper.totalScore)"
     }
     
-    var emoji = [Int: String]()
+    private var emoji = [Card: String]()
     
-    func emoji(for card: Card) -> String {
-        if emoji[card.identifier] == nil, currentEmojiChoices.count > 0 {
-            let randomIndex = Int(arc4random_uniform(UInt32( currentEmojiChoices.count)))
-            emoji[card.identifier] =  currentEmojiChoices.remove(at: randomIndex)
+    private func emoji(for card: Card) -> String {
+        if emoji[card] == nil, currentEmojiChoices.count > 0 {
+            emoji[card] =  currentEmojiChoices.remove(at: currentEmojiChoices.count.arc4random)
         }
         
-        return emoji[card.identifier] ?? "?"
+        return emoji[card] ?? "?"
     }
     
-    func updateUI(for theme: GameTheme){
+    private func updateUI(for theme: GameTheme){
         self.currentGameTheme = theme
         if let emojiChoices = self.currentGameTheme?.emojiChoices {
             self.currentEmojiChoices = emojiChoices
         }
+        updateFlipCountLabel()
+        self.view.backgroundColor = currentGameTheme?.backgroundColor
+        scoreLabel.textColor = currentGameTheme?.cardBackFaceColor
+        timerLabel.textColor = currentGameTheme?.cardBackFaceColor
+        updateViewFromModel()
     }
     
+    @objc private func updateTime() {
+        let currentTime = Date.timeIntervalSinceReferenceDate
+        var elapsedTime: TimeInterval = currentTime - startTime
+        let minutes = UInt8(elapsedTime/60)
+        elapsedTime -= (TimeInterval(minutes) * 60)
+        let seconds = UInt8(elapsedTime)
+        
+        let strMinutes = String(format: "%02d", minutes)
+        let strSeconds = String(format: "%02d", seconds)
+        timerLabel.text = "\(strMinutes):\(strSeconds)"
+        
+    }
+    
+    private func startTimer() {
+        if !timer.isValid {
+            timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
+            startTime = Date.timeIntervalSinceReferenceDate
+        }
+    }
+    
+    private func stopTimer() {
+        timer.invalidate()
+    }
+    
+}
+
+extension Int {
+    var arc4random: Int {
+        if self > 0 {
+            return Int(arc4random_uniform(UInt32(self)))
+        } else if self < 0 {
+            return -Int(arc4random_uniform(UInt32(abs(self))))
+        } else {
+            return 0
+        }
+    }
 }
 

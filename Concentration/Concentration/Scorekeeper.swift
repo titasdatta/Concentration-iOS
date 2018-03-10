@@ -9,10 +9,10 @@
 import Foundation
 class Scorekeeper {
     var totalScore = 0
-    var mismatchedCards: [Int] = []
+    var mismatchedCards: [Card] = []
     var startTime = Date()
     
-    func updateScore(for cards: [Int], didMatch: Bool) {
+    func updateScore(for cards: [Card], didMatch: Bool) {
         if didMatch {
             totalScore += 2
         } else {
